@@ -1,0 +1,57 @@
+Source: libiscsi
+Section: net
+Priority: optional
+Maintainer: Michael Tokarev <mjt@tls.msk.ru>
+Build-Depends: debhelper-compat (= 12), libcunit1-dev, librdmacm-dev
+Rules-Requires-Root: no
+Standards-Version: 4.5.0
+Homepage: https://github.com/sahlberg/libiscsi
+Vcs-Browser: https://salsa.debian.org/qemu-team/libiscsi
+Vcs-Git: https://salsa.debian.org/qemu-team/libiscsi.git
+
+Package: libiscsi7
+Section: libs
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: iSCSI client shared library
+ Libiscsi is a clientside library to implement the iSCSI protocol
+ that can be used to access resource of an iSCSI Target.
+ .
+ The library is fully async with regards to iscsi commands and scsi
+ tasks, but a sync layer is also provided for ease of use for simpler
+ applications.
+ .
+ This package contains the library itself.
+
+Package: libiscsi-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libiscsi7 (= ${binary:Version}), ${misc:Depends}
+Description: iSCSI client library development files
+ Libiscsi is a clientside library to implement the iSCSI protocol
+ that can be used to access resource of an iSCSI Target.
+ .
+ The library is fully async with regards to iscsi commands and scsi
+ tasks, but a sync layer is also provided for ease of use for simpler
+ applications.
+ .
+ This package contains the header files, static library and other files
+ needed to compile applications which uses libiscsi.
+
+Package: libiscsi-bin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: iSCSI client shared library - utilities
+ Libiscsi is a clientside library to implement the iSCSI protocol
+ that can be used to access resource of an iSCSI Target.
+ .
+ The library is fully async with regards to iscsi commands and scsi
+ tasks, but a sync layer is also provided for ease of use for simpler
+ applications.
+ .
+ This package contains a set of useful iscsi utilities such as logging in
+ to and enumerating all targets on a portal and all devices of a target,
+ all built on top of libiscsi.

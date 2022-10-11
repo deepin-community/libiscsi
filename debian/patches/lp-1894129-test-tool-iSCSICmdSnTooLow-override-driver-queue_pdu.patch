@@ -1,0 +1,69 @@
+From c067eef9c10c17b8a9be83ee4f71d4c8d0d238e4 Mon Sep 17 00:00:00 2001
+From: David Disseldorp <ddiss@suse.de>
+Date: Mon, 16 Sep 2019 14:46:28 +0200
+Subject: [PATCH] test-tool/iSCSICmdSnTooLow: override driver queue_pdu()
+ callback
+
+In preparation for removing the test-tool iscsi_queue_pdu() dlsym
+overload hack, convert this test to use the regular transport driver
+callback for this purpose.
+
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+
+Origin: upstream, https://github.com/sahlberg/libiscsi/commit/c067eef9
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1894129
+Last-Update: 2020-09-08
+
+---
+ test-tool/test_iscsi_cmdsn_toolow.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/test-tool/test_iscsi_cmdsn_toolow.c b/test-tool/test_iscsi_cmdsn_toolow.c
+index 0b980b3..23b93c3 100644
+--- a/test-tool/test_iscsi_cmdsn_toolow.c
++++ b/test-tool/test_iscsi_cmdsn_toolow.c
+@@ -25,6 +25,7 @@
+ #include "iscsi-test-cu.h"
+ 
+ static int change_cmdsn;
++static struct iscsi_transport iscsi_drv_orig;
+ 
+ static int my_iscsi_queue_pdu(struct iscsi_context *iscsi, struct iscsi_pdu *pdu)
+ {
+@@ -40,7 +41,7 @@ static int my_iscsi_queue_pdu(struct iscsi_context *iscsi, struct iscsi_pdu *pdu
+         }
+ 
+         change_cmdsn = 0;        
+-        return 0;
++        return iscsi_drv_orig.queue_pdu(iscsi, pdu);
+ }
+ 
+ void test_iscsi_cmdsn_toolow(void)
+@@ -64,7 +65,9 @@ void test_iscsi_cmdsn_toolow(void)
+ 
+         sd->iscsi_ctx->use_immediate_data = ISCSI_IMMEDIATE_DATA_NO;
+         sd->iscsi_ctx->target_max_recv_data_segment_length = block_size;
+-        local_iscsi_queue_pdu = my_iscsi_queue_pdu;
++        /* override transport queue_pdu callback for PDU manipulation */
++        iscsi_drv_orig = *sd->iscsi_ctx->drv;
++        sd->iscsi_ctx->drv->queue_pdu = my_iscsi_queue_pdu;
+         change_cmdsn = 1;
+         /* we don't want autoreconnect since some targets will incorrectly
+          * drop the connection on this condition.
+@@ -81,10 +84,11 @@ void test_iscsi_cmdsn_toolow(void)
+                 logging(LOG_VERBOSE, "[FAILURE] We got a response from the target but SMDSN was outside of the window.");
+         }
+ 
+-        
+-
+         iscsi_set_noautoreconnect(sd->iscsi_ctx, 0);
+         logging(LOG_VERBOSE, "Send a TESTUNITREADY with CMDSN == EXPCMDSN. should work again");
+         TESTUNITREADY(sd,
+                       EXPECT_STATUS_GOOD);
++
++        /* restore transport callbacks */
++        *(sd->iscsi_ctx->drv) = iscsi_drv_orig;
+ }
+-- 
+2.28.0
+

@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+# avoid linking with gcrypt which is used for fips compliance
+# to _disable_ md5 when the system is in fips mode.  If gcrypt
+# is disabled, regular md5 implementation will be used.
+	ac_cv_lib_gcrypt_gcry_control=no \
+	 dh_auto_configure -- --disable-werror --enable-manpages

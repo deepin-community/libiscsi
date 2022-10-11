@@ -1,0 +1,39 @@
+From c830a3b55e91fe8b1cb97e6899ef872691c8804e Mon Sep 17 00:00:00 2001
+From: David Disseldorp <ddiss@suse.de>
+Date: Mon, 16 Sep 2019 15:40:00 +0200
+Subject: [PATCH] test-tool/CryptoEraseReserved: skip unless iSCSI
+
+This test performs PDU manipulation so should only be run against iSCSI
+devices.
+
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+
+Origin: upstream, https://github.com/sahlberg/libiscsi/commit/c830a3b5
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1894129
+Last-Update: 2020-09-08
+
+---
+ test-tool/test_sanitize_crypto_erase_reserved.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/test-tool/test_sanitize_crypto_erase_reserved.c b/test-tool/test_sanitize_crypto_erase_reserved.c
+index c713ab5..00bbf34 100644
+--- a/test-tool/test_sanitize_crypto_erase_reserved.c
++++ b/test-tool/test_sanitize_crypto_erase_reserved.c
+@@ -56,6 +56,13 @@ void test_sanitize_crypto_erase_reserved(void)
+ 
+         CHECK_FOR_SANITIZE;
+         CHECK_FOR_DATALOSS;
++        if (sd->iscsi_ctx == NULL) {
++                const char *err = "[SKIPPED] This test is "
++                        "only supported for iSCSI backends";
++                logging(LOG_NORMAL, "%s", err);
++                CU_PASS(err);
++                return;
++        }
+ 
+         local_iscsi_queue_pdu = my_iscsi_queue_pdu;
+ 
+-- 
+2.28.0
+

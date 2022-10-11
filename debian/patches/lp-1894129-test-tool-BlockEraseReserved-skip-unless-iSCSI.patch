@@ -1,0 +1,39 @@
+From fdc45fadfa06f2543a12abe8eefe7f87d5dab0c2 Mon Sep 17 00:00:00 2001
+From: David Disseldorp <ddiss@suse.de>
+Date: Mon, 16 Sep 2019 15:40:00 +0200
+Subject: [PATCH] test-tool/BlockEraseReserved: skip unless iSCSI
+
+This test performs PDU manipulation so should only be run against iSCSI
+devices.
+
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+
+Origin: upstream, https://github.com/sahlberg/libiscsi/commit/fdc45fad
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1894129
+Last-Update: 2020-09-08
+
+---
+ test-tool/test_sanitize_block_erase_reserved.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/test-tool/test_sanitize_block_erase_reserved.c b/test-tool/test_sanitize_block_erase_reserved.c
+index 55c85d9..fcb862e 100644
+--- a/test-tool/test_sanitize_block_erase_reserved.c
++++ b/test-tool/test_sanitize_block_erase_reserved.c
+@@ -56,6 +56,13 @@ void test_sanitize_block_erase_reserved(void)
+ 
+         CHECK_FOR_SANITIZE;
+         CHECK_FOR_DATALOSS;
++        if (sd->iscsi_ctx == NULL) {
++                const char *err = "[SKIPPED] This test is "
++                        "only supported for iSCSI backends";
++                logging(LOG_NORMAL, "%s", err);
++                CU_PASS(err);
++                return;
++        }
+ 
+         local_iscsi_queue_pdu = my_iscsi_queue_pdu;
+ 
+-- 
+2.28.0
+

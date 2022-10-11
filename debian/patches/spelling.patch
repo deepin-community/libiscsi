@@ -1,0 +1,33 @@
+--- a/test-tool/test_sanitize_reset.c
++++ b/test-tool/test_sanitize_reset.c
+@@ -67,3 +67,3 @@ test_sanitize_reset(void)
+ 
+-        logging(LOG_VERBOSE, "Send an asyncronous SANITIZE to the target.");
++        logging(LOG_VERBOSE, "Send an asynchronous SANITIZE to the target.");
+         data.size = block_size + 4;
+--- a/test-tool/test_compareandwrite_miscompare.c
++++ b/test-tool/test_compareandwrite_miscompare.c
+@@ -97,3 +97,3 @@ test_compareandwrite_miscompare(void)
+                                 logging(LOG_VERBOSE, "[FAILED] Data changed "
+-                                        "eventhough there was a miscompare");
++                                        "even though there was a miscompare");
+                                 CU_FAIL("Block was written to");
+@@ -153,3 +153,3 @@ test_compareandwrite_miscompare(void)
+                                 logging(LOG_VERBOSE, "[FAILED] Data changed "
+-                                        "eventhough there was a miscompare");
++                                        "even though there was a miscompare");
+                                 CU_FAIL("Block was written to");
+--- a/test-tool/test_sanitize_block_erase.c
++++ b/test-tool/test_sanitize_block_erase.c
+@@ -163,3 +163,3 @@ check_unmap(void)
+                           logging(LOG_VERBOSE, "[FAILED] Descriptor %d is MAPPED."
+-                                "All descriptors shoudl be either DEALLOCATED "
++                                "All descriptors should be either DEALLOCATED "
+                                 "or ANCHORED after SANITIZE", i);
+--- a/packaging/RPM/libiscsi.spec.in
++++ b/packaging/RPM/libiscsi.spec.in
+@@ -232,3 +232,3 @@ Test tool for iSCSI/SCSI targets
+  - Make sure we can handle racy eventsystems which might call us for 
+-   POLLIN eventhough there is no longer any data to read from the socket.
++   POLLIN even though there is no longer any data to read from the socket.
+  - Only set up tcp keepalives on systems that support them.

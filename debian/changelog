@@ -1,0 +1,205 @@
+libiscsi (1.19.0-3) unstable; urgency=medium
+
+  [ Michael Tokarev ]
+  * create packaging git repository on salsa under qemu umbrella,
+    set VCS fields in d/control
+  * add d/not-installed
+
+  [ Christian Ehrhardt ]
+  * Bug#969074: [PATCH] d/p/lp-1894129-*: fix FTBFS
+    (LP: #1894129 Closes: #969074)
+    patches added:
+      lp-1894129-test-tool-BlockEraseReserved-override-driver-queue_p.patch
+      lp-1894129-test-tool-BlockEraseReserved-skip-unless-iSCSI.patch
+      lp-1894129-test-tool-Compare-Write-override-driver-queue_pdu-ca.patch
+      lp-1894129-test-tool-Compare-Write-skip-InvalidDataOutSize-unle.patch
+      lp-1894129-test-tool-CryptoEraseReserved-override-driver-queue_.patch
+      lp-1894129-test-tool-CryptoEraseReserved-skip-unless-iSCSI.patch
+      lp-1894129-test-tool-iSCSICmdSnTooHigh-override-driver-queue_pd.patch
+      lp-1894129-test-tool-iSCSICmdSnTooLow-override-driver-queue_pdu.patch
+      lp-1894129-test-tool-iSCSIDataSnInvalid-override-driver-queue_p.patch
+      lp-1894129-test-tool-OverwriteReserved-override-driver-queue_pd.patch
+      lp-1894129-test-tool-remove-unused-iscsi_queue_pdu-symbol-overl.patch
+      lp-1894129-test-tool-Use-extern-int-in-headers.patch
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Fri, 04 Dec 2020 22:23:27 +0300
+
+libiscsi (1.19.0-2) unstable; urgency=medium
+
+  * attribute_packed.patch (Closes: #966864)
+  * spelling.patch - fix a few selling mistakes
+  * provide Build-Depends-Package for libiscsi.symbols
+  * do not explicitly use dh_autoreconf (dh >= 10)
+  * use debhelper-compat instead of dh version
+  * bump debhelper-compat to 12
+  * bump standards-version to 4.5.0 (no changes)
+  * remove trailing whitespace from old changelog entry
+  * Rules-Requires-Root: no
+  * fix DEP5 format URL
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 05 Aug 2020 13:40:02 +0300
+
+libiscsi (1.19.0-1) unstable; urgency=medium
+
+  * new upstream version:
+    * Sun Jul 14 2019 : 1.19.0
+     - iSER improvements
+     - Add support to senable/disable digests via URL arguments
+     - Add XCOPY support to examples/dd
+     - Add support for EXTENDED_COPY and RECEIVE_COPY_RESULTS
+     - Performance improvements for reading from the socket.
+     - Test improvements
+    (Closes: #956916, #957444, #942189)
+  * refresh debian/patches/soversion.diff, upstream *still* can't learn.. :(
+  * remove iser-use-local-container_of-definition.patch, fix-32bit-build.patch,
+    avoid-fallthrough.patch, avoid-truncation-when-logging-message.patch -
+    now included by upstream
+  * bump debhelper compat level to 10
+  * add 4 new symbols to .symbols file
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Mon, 20 Apr 2020 12:25:15 +0300
+
+libiscsi (1.18.0-2) unstable; urgency=medium
+
+  * iser-use-local-container_of-definition.patch - patch from upstream,
+    fix compilation error with current iser
+  * fix-32bit-build.patch - patch from upstream,
+    fix printf format error on 32bit architectures
+  * avoid-fallthrough.patch - patch from upstream
+  * avoid-truncation-when-logging-message.patch - patch from upstream
+    to fix logging (and compiler warning)
+  * strip debian revision numbers from the .symbols file
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Tue, 01 Jan 2019 20:14:18 +0300
+
+libiscsi (1.18.0-1) unstable; urgency=medium
+
+  * new upstream release
+  * build-depend on librdmacm-dev
+  * Multi-Arch: same for libiscsi-dev
+  * add debian/patches/soversion.diff -
+    upstream keeps upping soversion on every release, this is wrong
+  * update symbols file
+  * add debian/patches/libpthread.diff - iser support uses symbols
+    from libpthread, so add -lpthread to the mix
+  * Std-Version: 4.3.0
+  * add debian/watch for github releases
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Tue, 01 Jan 2019 12:40:50 +0300
+
+libiscsi (1.17.0-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Don't disable PIE, to make static libraries usable with
+    gcc defaulting to PIE. (Closes: #859414)
+
+ -- Adrian Bunk <bunk@debian.org>  Mon, 10 Apr 2017 22:05:20 +0300
+
+libiscsi (1.17.0-1) unstable; urgency=medium
+
+  * new upstream release (Closes: #822870)
+  * new ABI version (libiscsi7), update symbols file
+  * remove patches
+  * bump Standards-Version to 3.9.8 (no changes needed)
+  * fix d/copyright multi-line Copyright issue
+  * enable hardening flags (but not pie, it conflicts with shared lib)
+  * fix spelling in iscsi-perf
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 19 May 2016 17:55:46 +0300
+
+libiscsi (1.12.0-2) unstable; urgency=medium
+
+  * add --disable-werror opt to ./configure
+    (hopefully closes: #753848)
+  * ship some manpages (--enable-manpages)
+  * iscsi-dd-format-string.patch
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 31 Jul 2014 17:23:30 +0400
+
+libiscsi (1.12.0-1) unstable; urgency=medium
+
+  * new upstream release
+  * removed all debian-specific patches (included upstream)
+  * disable usage of libgcrypt for disabling of md5 in fips mode
+  * fix-soversion.diff - fix version info mess
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Thu, 31 Jul 2014 12:43:27 +0400
+
+libiscsi (1.11.0-5) unstable; urgency=medium
+
+  * ship the forgotten libiscsi.pc file
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 16 Jul 2014 21:32:27 +0400
+
+libiscsi (1.11.0-4) unstable; urgency=medium
+
+  * test-tool-0430-cast.diff : fix "cast increases required alignment"
+    warning on mips and arm in one of the old tests
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 07 May 2014 21:59:40 +0400
+
+libiscsi (1.11.0-3) unstable; urgency=medium
+
+  * format-string-cast-ptrdiff-on-32bit-arch-747262.diff (Closes: #747262)
+  * format-string-int-on-32bit.diff - more format string fixes for 32bits
+  * slist.h-undef-SLIST_REMOVE-747263.diff (Closes: #747263)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Wed, 07 May 2014 11:41:27 +0400
+
+libiscsi (1.11.0-2) unstable; urgency=medium
+
+  * refresh debian/copyright (Closes: #747207)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Tue, 06 May 2014 15:37:26 +0400
+
+libiscsi (1.11.0-1) unstable; urgency=low
+
+  * new upstream release 1.11.0
+  * bump soname from libscsi1 to libscsi2, refresh symbols file
+  * removed patches (included upstream):
+   - always-export-iscsi_set_tcp_keepalive.patch
+   - export-only-required-symbols.patch
+  * remove build-dep on libpopt-dev
+  * build-depend on libcunit (unit tests)
+  * do NOT build-depend on libgcrypt (solely for md5)
+  * fix description of the -dev package
+  * stop assigning useless variables in debian/rules,
+    debhelper takes care of it automatically
+  * bump Standards-Version to 3.9.5 (no changes)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Sun, 27 Apr 2014 09:51:14 +0400
+
+libiscsi (1.4.0-3) unstable; urgency=low
+
+  * patches/always-export-iscsi_set_tcp_keepalive.patch: always
+    define and export the function, even on platform that does
+    not support some or all TCP socket options. (Closes: #672529)
+  * patches/export-only-required-symbols.patch: create a list of
+    symbols which needs to be exported, and use it with libtool.
+  * remove unnecessary symbols from debian/symbols and rename it
+    to debian/libiscsi1.symbols.
+  * simplify/cleanup debian/rules, and explicitly use
+      dpkg-architecture -qDEB_HOST_MULTIARCH
+  * add debian/.gitignore
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Sat, 12 May 2012 00:24:43 +0400
+
+libiscsi (1.4.0-2) unstable; urgency=low
+
+  * introduce debian/symbols file to track which symbols introduced when
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Fri, 11 May 2012 14:56:43 +0400
+
+libiscsi (1.4.0-1) unstable; urgency=low
+
+  * new upstream version
+  * build-depend on debhelper > 9~
+  * update Standards-Version to 3.9.3 (no changes needed)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Fri, 04 May 2012 12:05:48 +0400
+
+libiscsi (1.0.1-1) unstable; urgency=low
+
+  * Initial release. (Closes: #653055)
+
+ -- Michael Tokarev <mjt@tls.msk.ru>  Fri, 23 Dec 2011 13:47:46 +0400

@@ -1,0 +1,39 @@
+From 60a5856f00731be578a57bfbf68b2e9858680f07 Mon Sep 17 00:00:00 2001
+From: David Disseldorp <ddiss@suse.de>
+Date: Mon, 16 Sep 2019 14:33:50 +0200
+Subject: [PATCH] test-tool/Compare&Write: skip InvalidDataOutSize unless iSCSI
+
+This test performs PDU manipulation so should only be run against iSCSI
+devices.
+
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+
+Origin: upstream, https://github.com/sahlberg/libiscsi/commit/60a5856f
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1894129
+Last-Update: 2020-09-08
+
+---
+ test-tool/test_compareandwrite_invalid_dataout_size.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/test-tool/test_compareandwrite_invalid_dataout_size.c b/test-tool/test_compareandwrite_invalid_dataout_size.c
+index 4abd501..eb6a6dd 100644
+--- a/test-tool/test_compareandwrite_invalid_dataout_size.c
++++ b/test-tool/test_compareandwrite_invalid_dataout_size.c
+@@ -53,6 +53,13 @@ test_compareandwrite_invalid_dataout_size(void)
+         CHECK_FOR_THIN_PROVISIONING;
+         CHECK_FOR_LBPPB_GT_1;
+         CHECK_FOR_SBC;
++        if (sd->iscsi_ctx == NULL) {
++                const char *err = "[SKIPPED] This test is "
++                        "only supported for iSCSI backends";
++                logging(LOG_NORMAL, "%s", err);
++                CU_PASS(err);
++                return;
++        }
+ 
+         local_iscsi_queue_pdu = my_iscsi_queue_pdu;
+         
+-- 
+2.28.0
+

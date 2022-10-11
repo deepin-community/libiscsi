@@ -1,0 +1,104 @@
+From dd17293bcc188dbefc420ee23b77bc9bb7c5e9a2 Mon Sep 17 00:00:00 2001
+From: David Disseldorp <ddiss@suse.de>
+Date: Mon, 16 Sep 2019 16:02:36 +0200
+Subject: [PATCH] test-tool: remove unused iscsi_queue_pdu() symbol overload
+
+All users have now been changed to overload via the iscsi_ctx transport
+callback, so the dlsym based overloading can now be dropped.
+
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+
+Origin: upstream, https://github.com/sahlberg/libiscsi/commit/dd17293b
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1894129
+Last-Update: 2020-09-08
+
+---
+ test-tool/iscsi-support.c | 11 -----------
+ test-tool/iscsi-support.h |  1 -
+ test-tool/iscsi-test-cu.c | 15 ---------------
+ 3 files changed, 27 deletions(-)
+
+diff --git a/test-tool/iscsi-support.c b/test-tool/iscsi-support.c
+index 4b49478..169d2b0 100644
+--- a/test-tool/iscsi-support.c
++++ b/test-tool/iscsi-support.c
+@@ -119,8 +119,6 @@ int readonly;
+ int sbc3_support;
+ int maximum_transfer_length;
+ 
+-int (*real_iscsi_queue_pdu)(struct iscsi_context *iscsi, struct iscsi_pdu *pdu);
+-
+ static const unsigned char zeroBlock[4096];
+ 
+ /**
+@@ -569,15 +567,6 @@ wait_until_test_finished(struct iscsi_context *iscsi, struct iscsi_async_state *
+         }
+ }
+ 
+-int
+-iscsi_queue_pdu(struct iscsi_context *iscsi, struct iscsi_pdu *pdu)
+-{
+-        if (local_iscsi_queue_pdu != NULL) {
+-                local_iscsi_queue_pdu(iscsi, pdu);
+-        }
+-        return real_iscsi_queue_pdu(iscsi, pdu);
+-}
+-
+ int
+ orwrite(struct scsi_device *sdev, uint64_t lba,
+         uint32_t datalen, int blocksize, int wrprotect,
+diff --git a/test-tool/iscsi-support.h b/test-tool/iscsi-support.h
+index aee00ca..2b20a1f 100644
+--- a/test-tool/iscsi-support.h
++++ b/test-tool/iscsi-support.h
+@@ -782,7 +782,6 @@ struct iscsi_async_state {
+ void wait_until_test_finished(struct iscsi_context *iscsi, struct iscsi_async_state *test_state);
+ 
+ struct iscsi_pdu;
+-int (*local_iscsi_queue_pdu)(struct iscsi_context *iscsi, struct iscsi_pdu *pdu);
+ 
+ struct scsi_command_descriptor *get_command_descriptor(int opcode, int sa);
+ 
+diff --git a/test-tool/iscsi-test-cu.c b/test-tool/iscsi-test-cu.c
+index eafda39..26e1b05 100644
+--- a/test-tool/iscsi-test-cu.c
++++ b/test-tool/iscsi-test-cu.c
+@@ -59,12 +59,6 @@ int loglevel = LOG_NORMAL;
+ struct scsi_device *sd = NULL;        /* mp_sds[0] alias */
+ static unsigned int maxsectors;
+ 
+-/*
+- * this allows us to redefine how PDU are queued, at times, for
+- * testing purposes
+- */
+-int (*real_iscsi_queue_pdu)(struct iscsi_context *iscsi, struct iscsi_pdu *pdu);
+-
+ /*****************************************************************
+  *
+  * list of tests and test suites
+@@ -805,7 +799,6 @@ test_setup(void)
+ {
+         task = NULL;
+         read_write_buf = NULL;
+-        local_iscsi_queue_pdu = NULL;
+ }
+ 
+ void
+@@ -1214,14 +1207,6 @@ main(int argc, char *argv[])
+                 mp_num_sds++;
+         }
+ 
+-        /* So that we can override iscsi_queue_pdu in tests
+-         * and replace or mutate the blob that we are about to write to the
+-         * wire.
+-         * This allows such tests to do their mutates and then call out
+-         * to the real queueing function once they have modified the data.
+-         */
+-        real_iscsi_queue_pdu = dlsym(RTLD_NEXT, "iscsi_queue_pdu");
+-
+         if ((mp_num_sds == 0) || (mp_sds[0]->iscsi_url == NULL
+                                         && mp_sds[0]->sgio_dev == NULL)) {
+ #ifdef HAVE_SG_IO
+-- 
+2.28.0
+
